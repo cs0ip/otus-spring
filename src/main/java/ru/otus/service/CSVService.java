@@ -1,4 +1,4 @@
-package ru.otus.spring.service;
+package ru.otus.service;
 
 import lombok.Data;
 
@@ -17,7 +17,7 @@ public interface CSVService {
 
     @Data
     class Answer {
-        private final int id;
-        private final String question;
+        private final int questionId;
+        private final String answer;
     }
 }
