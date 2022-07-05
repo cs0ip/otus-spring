@@ -11,6 +11,6 @@ public interface QNAService {
     @Data
     class QNA {
         private final CSVService.Question q;
-        private final List<CSVService.Answer> a;
+        private final List<CSVService.Answer> aList;
     }
 }

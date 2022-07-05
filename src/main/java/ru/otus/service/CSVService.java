@@ -12,12 +12,14 @@ public interface CSVService {
     @Data
     class Question {
         private final int id;
-        private final String question;
+        private final String text;
     }
 
     @Data
     class Answer {
+        private final int id;
         private final int questionId;
-        private final String answer;
+        private final String text;
+        private final boolean isCorrect;
     }
 }

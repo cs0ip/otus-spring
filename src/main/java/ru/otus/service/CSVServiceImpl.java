@@ -25,7 +25,7 @@ public class CSVServiceImpl implements CSVService {
     public List<Answer> getAnswers() {
         return readAll("answers.csv")
                 .stream()
-                .map(x -> new Answer(Integer.parseInt(x[0]), x[1]))
+                .map(x -> new Answer(Integer.parseInt(x[0]), Integer.parseInt(x[1]), x[2], Boolean.parseBoolean(x[3])))
                 .collect(Collectors.toList());
     }
 
