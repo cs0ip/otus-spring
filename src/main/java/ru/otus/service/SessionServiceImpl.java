@@ -1,8 +1,11 @@
 package ru.otus.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
-import ru.otus.model.User;
+import ru.otus.model.csv.CSVAnswer;
+import ru.otus.model.session.User;
+import ru.otus.model.session.UserAnswer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,33 +20,33 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public User runSession() {
-        var in = new Scanner(inProviderService.get());
-        var out = System.out;
+        val in = new Scanner(inProviderService.get());
+        val out = System.out;
         out.print("Enter your FIO: ");
-        var fio = in.nextLine();
+        val fio = in.nextLine();
         out.printf("Hi, %s. Lets play a game\n\n", fio);
-        var qna = qnaService.getQNAs();
-        var userAnswers = new ArrayList<User.Answer>();
+        val qna = qnaService.getQNAs();
+        val userAnswers = new ArrayList<UserAnswer>();
         qna.forEach(q -> {
             out.printf("Q: %s\n", q.getQ().getText());
-            var answers = new HashMap<Integer, CSVService.Answer>();
+            val answers = new HashMap<Integer, CSVAnswer>();
             {
-                var qaList = q.getAList();
+                val qaList = q.getAList();
                 for (int i = 1; i <= qaList.size(); i++) {
-                    var a = qaList.get(i - 1);
+                    val a = qaList.get(i - 1);
                     answers.put(i, a);
                     out.printf("  [%s]: %s\n", i, a.getText());
                 }
             }
-            CSVService.Answer userAnswer = null;
+            CSVAnswer userAnswer = null;
             {
                 var isCorrectNum = false;
                 while (!isCorrectNum) {
                     out.print("Enter answer number: ");
                     try {
-                        var line = in.nextLine();
-                        var answerNum = Integer.parseInt(line.trim());
-                        var a = answers.getOrDefault(answerNum, null);
+                        val line = in.nextLine();
+                        val answerNum = Integer.parseInt(line.trim());
+                        val a = answers.getOrDefault(answerNum, null);
                         if (a != null) {
                             isCorrectNum = true;
                             userAnswer = a;
@@ -53,7 +56,7 @@ public class SessionServiceImpl implements SessionService {
                 }
             }
             out.printf("Answer is%s correct\n\n", userAnswer.isCorrect() ? "" : " not");
-            userAnswers.add(new User.Answer(q.getQ().getId(), userAnswer.getId(), userAnswer.isCorrect()));
+            userAnswers.add(new UserAnswer(q.getQ().getId(), userAnswer.getId(), userAnswer.isCorrect()));
         });
         return new User(fio, userAnswers);
     }
