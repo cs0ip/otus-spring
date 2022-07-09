@@ -1,16 +1,16 @@
 package ru.otus;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.otus.service.QNAService;
+import lombok.val;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import ru.otus.service.MainService;
 
+@ComponentScan("ru.otus")
 public class Main {
 
     public static void main(String[] args) {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("/spring-context.xml");
-        var service = context.getBean(QNAService.class);
-        service.getQNAs().forEach(qna -> {
-            System.out.printf("q: %s\n", qna.getQ().getQuestion());
-            qna.getA().forEach(a -> System.out.printf("  a: %s\n", a.getAnswer()));
-        });
+        val context = new AnnotationConfigApplicationContext(Main.class);
+        val service = context.getBean(MainService.class);
+        service.run();
     }
 }
