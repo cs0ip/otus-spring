@@ -6,7 +6,6 @@ import ru.otus.model.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 @Service
@@ -14,10 +13,11 @@ import java.util.Scanner;
 public class SessionServiceImpl implements SessionService {
 
     private final QNAService qnaService;
+    private final InProviderService inProviderService;
 
     @Override
     public User runSession() {
-        var in = new Scanner(System.in);
+        var in = new Scanner(inProviderService.get());
         var out = System.out;
         out.print("Enter your FIO: ");
         var fio = in.nextLine();
