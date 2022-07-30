@@ -1,0 +1,4 @@
+app:
+  locale: ru
+  questions: csv/questions.csv
+  answers: csv/answers.csv

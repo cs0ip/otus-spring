@@ -3,20 +3,27 @@ package ru.otus.service;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTestContextBootstrapper;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.test.context.BootstrapWith;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import ru.otus.App;
+import ru.otus.config.Config;
+import ru.otus.util.io.AppInput;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringJUnitConfig
-public class SessionServiceTests {
+@SpringBootTest
+@SpringJUnitConfig({App.class, SessionServiceTest.TestConfiguration.class})
+public class SessionServiceTest {
 
     @Autowired
     SessionService sessionService;
@@ -30,26 +37,28 @@ public class SessionServiceTests {
     }
 
     @Configuration
-    @ComponentScan("ru.otus")
     public static class TestConfiguration {
         @Bean
-        public InProviderService inProviderService() {
-            return new TestInProviderService();
+        @Primary
+        public AppInput testAppInput() {
+            return new TestAppInput();
         }
-    }
 
-    public static class TestInProviderService implements InProviderService {
-        @Override
-        public InputStream get() {
-            val input = List.of(
+        public static class TestAppInput implements AppInput {
+
+            private final Iterator<String> it = List.of(
                     "User Name",
                     "2",
                     "3",
                     "2",
                     "2",
                     "3"
-            );
-            return new ByteArrayInputStream(String.join("\n", input).getBytes(StandardCharsets.UTF_8));
+            ).iterator();
+
+            @Override
+            public String readLine() {
+                return it.next();
+            }
         }
     }
 }
