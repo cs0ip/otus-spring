@@ -2,29 +2,33 @@ package ru.otus.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ru.otus.model.csv.CSVAnswer;
 import ru.otus.model.session.User;
 import ru.otus.model.session.UserAnswer;
+import ru.otus.util.AppLocale;
+import ru.otus.util.io.AppInput;
+import ru.otus.util.io.AppOutput;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 @Service
 @RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
 
     private final QNAService qnaService;
-    private final InProviderService inProviderService;
+    private final AppInput in;
+    private final AppOutput out;
+    private final AppLocale locale;
+    private final MessageSource ms;
 
     @Override
     public User runSession() {
-        val in = new Scanner(inProviderService.get());
-        val out = System.out;
-        out.print("Enter your FIO: ");
-        val fio = in.nextLine();
-        out.printf("Hi, %s. Lets play a game\n\n", fio);
+        out.printf("%s: ", ms.getMessage("enterFIO", null, locale.locale));
+        val fio = in.readLine();
+        out.printf("%s\n\n", ms.getMessage("greetings", new Object[]{fio}, locale.locale));
         val qna = qnaService.getQNAs();
         val userAnswers = new ArrayList<UserAnswer>();
         qna.forEach(q -> {
@@ -44,7 +48,7 @@ public class SessionServiceImpl implements SessionService {
                 while (!isCorrectNum) {
                     out.print("Enter answer number: ");
                     try {
-                        val line = in.nextLine();
+                        val line = in.readLine();
                         val answerNum = Integer.parseInt(line.trim());
                         val a = answers.getOrDefault(answerNum, null);
                         if (a != null) {
